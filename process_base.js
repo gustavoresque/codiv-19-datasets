@@ -57,11 +57,11 @@ csv({delimiter:","})
 	.then((jsonObjPop)=>{
 		let changeName = {
 			"United States": "US",
-			"China": "Mainland China", 
+			// "China": "Mainland China", 
 			"Hong Kong SAR, China": "Hong Kong",
 			"Macao SAR, China": "Macau",
 			"Korea, Rep.":"South Korea",
-			"United Kingdom": "UK", 
+			//"United Kingdom": "UK", 
 			"Russian Federation": "Russia",
 			"Egypt, Arab Rep.": "Egypt",
 			"Iran, Islamic Rep.":"Iran",
