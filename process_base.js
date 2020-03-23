@@ -26,7 +26,7 @@ csv({delimiter:","})
 		for(let j =0; j <paises_unicos.length; j++){
 			
 			let newInstance = {date: datas_unicas[i], country: paises_unicos[j]};
-			let countConfirmed = 0, countDeaths=0, countRecovered=0, countLastConfirmed;
+			let countConfirmed = 0, countDeaths=0, countRecovered=0, countLastConfirmed=0;
 			for(let k =0; k <jsonObj.length; k++){
 				if(jsonObj[k]["ObservationDate"] === datas_unicas[i] && jsonObj[k]["Country/Region"] === paises_unicos[j]){
 					countConfirmed +=  +jsonObj[k]["Confirmed"];
@@ -43,7 +43,9 @@ csv({delimiter:","})
 			newInstance.death_rate = newInstance.deaths/newInstance.confirmed;
 			newInstance.recovery_rate = newInstance.recovered/newInstance.confirmed;
 			newInstance._lastconfirmed = countLastConfirmed;
-			newInstance.growth_rate = newInstance.confirmed/newInstance._lastconfirmed;
+			growth_aux = newInstance.confirmed/newInstance._lastconfirmed;
+			newInstance.growth_rate = i>0?(isNaN(growth_aux)|| !isFinite(growth_aux) ? 0:growth_aux):0;
+			
 
 			new_data.push(newInstance);
 		}
@@ -60,7 +62,7 @@ csv({delimiter:","})
 			// "China": "Mainland China", 
 			"Hong Kong SAR, China": "Hong Kong",
 			"Macao SAR, China": "Macau",
-			"Korea, Rep.":"South Korea",
+			"Korea, Rep.":"Korea, South",
 			//"United Kingdom": "UK", 
 			"Russian Federation": "Russia",
 			"Egypt, Arab Rep.": "Egypt",
@@ -83,8 +85,8 @@ csv({delimiter:","})
 				new_data[j].deaths_per_1M = new_data[j].deaths * 1000000 / new_data[j].popcount;
 				new_data[j].recovered_per_1M = new_data[j].recovered * 1000000 / new_data[j].popcount;
 				new_data[j].active_per_1M = new_data[j].active * 1000000 / new_data[j].popcount;
-				new_data[j]._lastconfirmed_per_1M = new_data[j]._lastconfirmed * 1000000 / new_data[j].popcount;
-				new_data[j].growth_rate_per_1M = new_data[j].confirmed_per_1M/new_data[j]._lastconfirmed_per_1M;
+				// new_data[j]._lastconfirmed_per_1M = new_data[j]._lastconfirmed * 1000000 / new_data[j].popcount;
+				// new_data[j].growth_rate_per_1M = new_data[j].confirmed_per_1M/new_data[j]._lastconfirmed_per_1M;
 			}
 		}
 
