@@ -1,5 +1,6 @@
 const fs = require("fs");
 
+const csvFilePathBed='./leitos/leitos.csv';
 const csvFilePathPop='./dataset_pop.csv';
 const csvFilePath='./covid_19_data.csv';
 const csv=require('csvtojson');
@@ -40,8 +41,8 @@ csv({delimiter:","})
 			newInstance.deaths = countDeaths;
 			newInstance.recovered = countRecovered;
 			newInstance.active = newInstance.confirmed-newInstance.deaths-newInstance.recovered;
-			newInstance.death_rate = newInstance.deaths/newInstance.confirmed;
-			newInstance.recovery_rate = newInstance.recovered/newInstance.confirmed;
+			newInstance.death_rate = newInstance.confirmed > 0 ? newInstance.deaths/newInstance.confirmed : 0;
+			newInstance.recovery_rate = newInstance.confirmed > 0 ? newInstance.recovered/newInstance.confirmed : 0;
 			newInstance._lastconfirmed = countLastConfirmed;
 			growth_aux = newInstance.confirmed/newInstance._lastconfirmed;
 			newInstance.growth_rate = i>0?(isNaN(growth_aux)|| !isFinite(growth_aux) ? 0:growth_aux):0;
@@ -107,11 +108,44 @@ csv({delimiter:","})
 		//console.log("filtered coutries: ", paises);
 		
 
-		fs.writeFile("covid_19_data.json",JSON.stringify(new_data),"utf-8",(err)=>{
-			if(err)
-				throw err;
-			console.log("data Saved!");
-		})
+
+		csv({delimiter:","})
+			.fromFile(csvFilePathBed)
+			.then((jsonObjBed)=>{
+				objCruzado = {};
+				for(let i =0; i <jsonObjPop.length; i++){
+					for(let j =0; j <jsonObjBed.length; j++){
+						let code = jsonObjPop[i]["Country Code"];
+						if(code === jsonObjBed[j]["LOCATION"]){
+							objCruzado[code] = {
+								beds: Math.round((jsonObjBed[j]["Value"]/1000)*(+jsonObjPop[i]["2018"])),
+								country: changeName[jsonObjPop[i]['Country Name']] ? changeName[jsonObjPop[i]['Country Name']]: jsonObjPop[i]['Country Name']
+							}
+							break;
+						}
+					}
+				}
+				for(let code in objCruzado){
+					//console.log(objCruzado[code].beds, objCruzado[code].country);
+					for(let j =0; j <new_data.length; j++){
+						if(new_data[j].country === objCruzado[code].country){
+							new_data[j].confirmed_per_bed = new_data[j].confirmed/objCruzado[code].beds;
+							new_data[j].active_per_bed = new_data[j].active/objCruzado[code].beds;
+						}
+					}
+				}
+				// console.log(new_data);
+				fs.writeFile("covid_19_data.json",JSON.stringify(new_data),"utf-8",(err)=>{
+					if(err)
+						throw err;
+					console.log("data Saved!");
+				})
+
+			});
+
+
+
+		
 
 	});
 
