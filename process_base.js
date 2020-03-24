@@ -134,7 +134,14 @@ csv({delimiter:","})
 						}
 					}
 				}
-				// console.log(new_data);
+
+				//Debug para ver se o Brasil aparece
+				// for(let j =0; j <new_data.length; j++){
+				// 	if(new_data[j].country === "Brazil"){
+				// 		console.log(new_data[j]);
+				// 	}
+				// }
+
 				fs.writeFile("covid_19_data.json",JSON.stringify(new_data),"utf-8",(err)=>{
 					if(err)
 						throw err;
