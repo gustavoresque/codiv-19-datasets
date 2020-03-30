@@ -53,6 +53,25 @@ csv({delimiter:","})
 		
 	}
 
+	//Calcula o intervalo de dias que o número atual de recuperados é igual ou menor que número de de confirmados menos mortes. 
+	for(let j =0; j <new_data.length; j++){
+		if(new_data[j].recovered === 0){
+			new_data[j].days_to_recover = 0;
+		}else{
+			let days=0;
+			for(let k = j-1; k >= 0; k--){
+				if(new_data[j].country !== new_data[k].country)
+					continue;
+
+				days++;
+				if(new_data[j].recovered >= new_data[k].confirmed-new_data[k].deaths)
+					break;
+
+			}
+			new_data[j].days_to_recover = days;
+		}
+	}
+
 
 	//Realiza o cruzamento dos dados sobre o covid-19 com a população mundial em 2018 (última atualização).
 	csv({delimiter:","})
@@ -107,7 +126,6 @@ csv({delimiter:","})
 		console.log("datalength after filter: "+new_data.length);
 		//console.log("filtered coutries: ", paises);
 		
-
 
 		csv({delimiter:","})
 			.fromFile(csvFilePathBed)
