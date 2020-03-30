@@ -53,7 +53,7 @@ csv({delimiter:","})
 		
 	}
 
-	//Calcula o intervalo de dias que o número atual de recuperados é igual ou menor que número de de confirmados menos mortes. 
+	//Calcula o intervalo de dias que o número atual de recuperados é menor ou igual ao número de ativos do passado. 
 	for(let j =0; j <new_data.length; j++){
 		if(new_data[j].recovered === 0){
 			new_data[j].days_to_recover = 0;
@@ -64,7 +64,7 @@ csv({delimiter:","})
 					continue;
 
 				days++;
-				if(new_data[j].recovered >= new_data[k].confirmed-new_data[k].deaths)
+				if(new_data[j].recovered >= new_data[k].active)
 					break;
 
 			}
